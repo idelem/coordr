@@ -30,19 +30,85 @@
                 font-family: inherit;
                 caret-color: var(--mark-color);
             }
+            #plot {
+                width: 400px;
+                margin: auto;
+            }
+            .axes {
+                width: 400px;
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+                margin: auto;
+                align-items: center;
+                justify-content: center;
+                flex-grow: 1;
+            }
+            .axis {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
         </style>
         <script src="https://d3js.org/d3.v7.min.js"></script>
     </head>
     <body>
         <div id="plot"></div>
-        <div id="x">
-            <input type="text">
-            <textarea name="" id="xdata" cols="30" rows="10"></textarea>
+        <div class="axes">
+            <div id="x" class="axis">
+                <input type="text">
+                <textarea name="" id="xdata"rows="10"></textarea>
+            </div>
+            <div id="y" class="axis">
+                <input type="text">
+                <textarea name="" id="ydata"rows="10"></textarea>
+            </div>
         </div>
-        <div id="y">
-            <input type="text">
-            <textarea name="" id="ydata" cols="30" rows="10"></textarea>
-        </div>
-        <script></script>
+        <script>
+            function Plot () {
+                this.svg = null;
+                this.width = 400;
+                this.height = 400;
+                this.x = d3.scaleLinear();
+                this.y = d3.scaleLinear();
+
+                this.draw = function () {
+                    this.draw_x();
+                    this.draw_y();
+                    // this.draw_label();
+                }
+
+                this.init = function () {
+                    this.svg = d3.select("#plot")
+                        .append("svg")
+                        .attr("width", this.width)
+                        .attr("height", this.height)
+                    this.draw();
+                }
+
+                this.draw_x = function () {
+                    this.x.domain([-1, 1])
+                        .range([ 0, this.width ]);
+                    this.svg.append("g")
+                        .attr("transform", `translate(0, ${this.height/2})`)
+                        .call(d3.axisBottom(this.x));
+                }
+
+                this.draw_y = function () {
+                    this.y.domain([-1, 1])
+                        .range([ 0, this.height ]);
+                    this.svg.append("g")
+                        .attr("transform", `translate(${this.width/2}, 0)`)
+                        .call(d3.axisLeft(this.y));
+                }
+            }
+
+            window.onload = function () {
+                const plot = new Plot();
+                // plot.load();
+                plot.init();
+                // document.onkeydown = (e) => {plot.keydown(e);};
+            }
+        </script>
     </body>
 </html>
