@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>coordr</title>
+        <base href="/" target="_top">
+        <style type="text/css">
+            :root {
+                --page-color: #171717;
+                --text-color: #cccccc;
+                --mark-color: #47ebc8;
+                --grid-color: #282828;
+            }
+            :focus {
+                outline: 0;
+            }
+            body {
+                height: 100vh;
+                margin: 0;
+                background: var(--page-color);
+                color: var(--text-color);
+                position: relative;
+                font-family: "inconsolata", monospace;
+            }
+            input, textarea {
+                color: var(--text-color);
+                background-color: var(--grid-color);
+                border: 0;
+                outline: 0;
+                font-family: inherit;
+                caret-color: var(--mark-color);
+            }
+        </style>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+    </head>
+    <body>
+        <div id="plot"></div>
+        <div id="x">
+            <input type="text">
+            <textarea name="" id="xdata" cols="30" rows="10"></textarea>
+        </div>
+        <div id="y">
+            <input type="text">
+            <textarea name="" id="ydata" cols="30" rows="10"></textarea>
+        </div>
+        <script></script>
+    </body>
+</html>
