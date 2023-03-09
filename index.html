@@ -33,6 +33,7 @@
             #plot {
                 width: 400px;
                 margin: auto;
+                fill: var(--text-color);
             }
             .axes {
                 width: 400px;
@@ -56,26 +57,37 @@
         <div id="plot"></div>
         <div class="axes">
             <div id="x" class="axis">
-                <input type="text">
+                <input type="text" id="xlabel">
                 <textarea name="" id="xdata"rows="10"></textarea>
             </div>
             <div id="y" class="axis">
-                <input type="text">
+                <input type="text" id="ylabel">
                 <textarea name="" id="ydata"rows="10"></textarea>
             </div>
         </div>
         <script>
             function Plot () {
                 this.svg = null;
+
                 this.width = 400;
                 this.height = 400;
-                this.x = d3.scaleLinear();
-                this.y = d3.scaleLinear();
 
-                this.draw = function () {
-                    this.draw_x();
-                    this.draw_y();
-                    // this.draw_label();
+                this.x_scale = d3.scaleLinear();
+                this.y_scale = d3.scaleLinear();
+
+                this.ticks_x = 2;
+                this.ticks_y = 2;
+
+                this.x_labels = [];
+                this.x_label_el = document.getElementById("xlabel");
+                this.x_label_el.onblur = (e) => { this.update_x_label(); };
+                this.x_label_el.onkeydown = (e) => {
+                    if (event.key === 'Enter') this.update_x_label();
+                }
+
+                this.update = function () {
+                    this.update_x();
+                    // this.update_y();
                 }
 
                 this.init = function () {
@@ -83,23 +95,70 @@
                         .append("svg")
                         .attr("width", this.width)
                         .attr("height", this.height)
-                    this.draw();
-                }
 
-                this.draw_x = function () {
-                    this.x.domain([-1, 1])
+                    this.x_scale.domain([-1, 1])
                         .range([ 0, this.width ]);
+                    this.x_axis = d3.axisBottom(this.x_scale).ticks(2);
+
                     this.svg.append("g")
                         .attr("transform", `translate(0, ${this.height/2})`)
-                        .call(d3.axisBottom(this.x));
+                        .call(this.x_axis);
+                    
+                    this.label_x(["l", "r"]);
+
+                    this.update();
                 }
 
-                this.draw_y = function () {
+                this.update_x = function () {
+                }
+
+                this.update_y = function () {
                     this.y.domain([-1, 1])
                         .range([ 0, this.height ]);
                     this.svg.append("g")
                         .attr("transform", `translate(${this.width/2}, 0)`)
                         .call(d3.axisLeft(this.y));
+                }
+
+                this.label_x = function (labels=[]) {
+                    this.x_labels.map((el) => {el.remove()});
+                    this.x_labels = [];
+
+                    if (labels.length <= 1) {
+                        var label = this.svg.append("text")
+                            .attr("text-anchor", "end")
+                            .attr("x", this.width)
+                            .attr("y", this.height/2 + 40)
+                            .text(labels[0]);
+                        this.x_labels.push(label);
+                    }
+                    else {
+                        var spacing = (this.width - 40) / (labels.length - 1);
+                        labels.forEach((el,i) => {
+                            var label = this.svg.append("text")
+                                .attr("text-anchor", "middle")
+                                .attr("x", 20 + spacing * i)
+                                .attr("y", this.height/2 + 40)
+                                .text(el);
+                            this.x_labels.push(label);
+                        });
+                    }
+                }
+
+                this.label_y = function () {
+
+                }
+
+                this.update_x_label = function () {
+                    try {
+                        const x_labels = this.x_label_el.value.split(" ");
+                        console.log(x_labels);
+                        this.label_x(x_labels);
+                    }
+                    catch (e) {
+                        console.log(e);
+                        return;
+                    }
                 }
             }
 
